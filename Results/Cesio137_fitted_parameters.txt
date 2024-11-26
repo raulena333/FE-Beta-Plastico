@@ -1,0 +1,9 @@
+Fitted parameters for Cesio137:
+------------------------------------------------
+a (offset): 4323.3463 +- 107.6486
+b (background slope): -18.0670 +- 0.5004
+c (peak height): 2418.3657 +- 23.4957
+xc (peak center): 203.6601 +- 0.1189 channel
+s (peak width): 11.1913 +- 0.1651 channel
+------------------------------------------------
+Gaussian peak energy: 630 keV

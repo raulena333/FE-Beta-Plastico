@@ -18,18 +18,10 @@ use_log_scale = False  # True for log scale, False for linear scale
 
 # Names of nucleus isotopes and their excitation energies
 energy_beta = {
-    'Cesio137': {'Energy': 630, 'min': 180 , 'max': 240},
-    #'Europio152': {'Energy': 38, 'max': , 'min': },
-    #'Bario133': {'Energy': 38, 'max': , 'min': },
-    #'Talio204': {'Energy': 38, 'max': , 'min': }
+    'Cesio137': {'Energy': 630, 'min': 175, 'max': 230},
 }
 
-# Load background data
-data_background = np.loadtxt('./Data/Datos_Fondo_(canales).txt', skiprows=1)
-channel_number = data_background[:, 0]
-counts_background = data_background[:, 1]
-
-# Output directory
+# Output directory for results and plots
 output_dir = './Results'
 os.makedirs(output_dir, exist_ok=True)
 
@@ -37,56 +29,83 @@ os.makedirs(output_dir, exist_ok=True)
 def gaussian(x, a, b, c, xc, s): 
     return a + b * x + c * np.exp(-(x - xc)**2 / (2 * s**2))
 
-# Function to plot channel spectrum with calibration
-def plot_spectrum(name, channel_number, net_counts, max, min, fitted_curve=None):
-    plt.figure(figsize=(10, 6))
-    plt.plot(channel_number, net_counts, label=name, color="black")
-    
-    if fitted_curve is not None:
-        plt.plot(channel_number, fitted_curve, label="Fitted Model", color="red", linestyle="--")
-    
-    plt.xlabel("Canal")
-    plt.ylabel("Número de eventos")
-    plt.xlim(min - 20, max + 20)
-    plt.legend()
-
-    if use_log_scale:
-        plt.semilogy()
-        suffix = '_ChannelSpectreLog.pdf'
-    else:
-        suffix = '_ChannelSpectre.pdf'
-    
-    plt.savefig(os.path.join(output_dir, name + suffix))
-    plt.close()
-
 # Process each nucleus
-for name in energy_beta:
-    min_channel = energy_beta[name]['min']
-    max_channel = energy_beta[name]['max']
+for name, props in energy_beta.items():
+    min_channel = props['min']
+    max_channel = props['max']
 
     # Load data for the nucleus
-    file_path = f'./Data/Datos_{name}_(canales).txt'
+    file_path = f'./Data/Data_{name}_WithErrors_channel.txt'
     if not os.path.exists(file_path):
         print(f"File {file_path} does not exist. Skipping {name}.")
         continue
 
     data_nucleus = np.loadtxt(file_path, skiprows=1)
-    nucleus_counts = data_nucleus[:, 1]
-
-    # Calculate net counts
-    net_counts = np.maximum(nucleus_counts - counts_background, 0)
+    channel = data_nucleus[:, 0]
+    counts = data_nucleus[:, 1]
+    error = data_nucleus[:, 2]
 
     # Select data within the region of interest (from min to max)
-    region = (channel_number >= min_channel) & (channel_number <= max_channel)
-    channels_in_region = channel_number[region]
-    net_counts_in_region = net_counts[region]
+    region = (channel >= min_channel) & (channel <= max_channel)
+    channels_in_region = channel[region]
+    counts_in_region = counts[region]
+    error_in_region = error[region]
 
     # Fit the model (Gaussian + Linear background) to the data
-    initial_guess = [min(net_counts_in_region), 0, max(net_counts_in_region), (min_channel + max_channel) / 2, 10]
-    popt, _ = curve_fit(gaussian, channels_in_region, net_counts_in_region, p0=initial_guess)
+    initial_guess = [-1., -3., 3e3, 210, 5]
+    try:
+        popt, pcov = curve_fit(
+            gaussian, 
+            channels_in_region, 
+            counts_in_region, 
+            p0=initial_guess, 
+            sigma=error_in_region
+        )
+        # Calculate parameter errors as the square root of the diagonal of the covariance matrix
+        perr = np.sqrt(np.diag(pcov))
+    except RuntimeError as e:
+        print(f"Curve fitting failed for {name}: {e}. Skipping this nucleus.")
+        continue
 
-    # Extract fitted parameters
+    # Extract fitted parameters and their errors
+    a, b, c, xc, s = popt
+    a_err, b_err, c_err, xc_err, s_err = perr
+
+    # Generate the fitted curve
     fitted_curve = gaussian(channels_in_region, *popt)
 
+    # Save the fitted parameters and errors to a text file
+    param_file = f'./Results/{name}_fitted_parameters.txt'
+    with open(param_file, 'w') as f:
+        f.write(f"Fitted parameters for {name}:\n")
+        f.write("------------------------------------------------\n")
+        f.write(f"a (offset): {a:.4f} +- {a_err:.4f}\n")
+        f.write(f"b (background slope): {b:.4f} +- {b_err:.4f}\n")
+        f.write(f"c (peak height): {c:.4f} +- {c_err:.4f}\n")
+        f.write(f"xc (peak center): {xc:.4f} +- {xc_err:.4f} channel\n")
+        f.write(f"s (peak width): {s:.4f} +- {s_err:.4f} channel\n")
+        f.write("------------------------------------------------\n")
+        f.write(f"Gaussian peak energy: {props['Energy']} keV\n")
+    print(f"Fitted parameters and errors for {name} saved to {param_file}")
+
     # Plot the spectrum with the fitted Gaussian and background
-    plot_spectrum(name, channel_number, net_counts, max_channel, min_channel, fitted_curve=fitted_curve)
+    plt.figure(figsize=(10, 6))
+    plt.plot(channel, counts, label=f"{name} Data", color="black")
+    plt.plot(channels_in_region, fitted_curve, label=f"{name} Fit", color="red", linestyle='--', linewidth = 2)
+    plt.xlabel("Canal")
+    plt.xlim(0,512)
+    plt.ylabel("Numero de cuentas")
+    plt.legend()
+
+    # Apply log scale if specified
+    if use_log_scale:
+        plt.semilogy()
+        suffix = '_FitLog.pdf'
+    else:
+        suffix = '_Fit.pdf'
+
+    # Save the plot to the specified directory
+    plot_file_path = os.path.join(output_dir, name + suffix)
+    plt.savefig(plot_file_path)
+    plt.close()
+    print(f"Plot saved for {name} as {plot_file_path}")

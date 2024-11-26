@@ -13,15 +13,10 @@ params = {
 }
 pylab.rcParams.update(params)
 
-use_log_scale = False  # True for log scale, False for linear scale
+use_log_scale = True  # True for log scale, False for linear scale
 
 # Names of nucleus isotopes
 nucleus_names = {"Cesio137", "Europio152", "Bario133", "Talio204"}
-
-# Load background data
-data_background = np.loadtxt('./Data/Datos_Fondo_(canales).txt', skiprows=1)
-channel_number = data_background[:, 0]
-counts_background = data_background[:, 1]
 
 # Output directory
 output_dir = './Results'
@@ -54,10 +49,8 @@ for name in nucleus_names:
 
     # Load data for the nucleus
     data_nucleus = np.loadtxt(file_path, skiprows=1)
+    channel_number = data_nucleus[:, 0]
     nucleus_counts = data_nucleus[:, 1]
-
-    # Calculate net counts
-    net_counts = np.maximum(nucleus_counts - counts_background, 0)
-
+    
     # Plot spectrum
-    plot_spectrum(name, channel_number, net_counts)
+    plot_spectrum(name, channel_number, nucleus_counts)
