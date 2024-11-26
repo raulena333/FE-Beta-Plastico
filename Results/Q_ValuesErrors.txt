@@ -1,0 +1,3 @@
+Key	Q Value (MeV)	Q Error (MeV)
+Kurie	0.8008	0.0205
+N(E)	0.7998	0.0169
