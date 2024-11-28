@@ -54,3 +54,20 @@ for name in nucleus_names:
     
     # Plot spectrum
     plot_spectrum(name, channel_number, nucleus_counts)
+
+# Plot background data
+data_fondo_canales = np.loadtxt('./Data/Datos_Fondo_(canales).txt', skiprows=1) 
+
+# Plot spectre
+plt.figure(figsize=(10, 6))
+plt.plot(data_fondo_canales[:, 0], data_fondo_canales[:, 1], color="black")
+
+plt.xlabel("Canal")
+plt.ylabel("Numero de cuentas")
+if use_log_scale:
+    plt.semilogy()
+    suffix = '_ChannelSpectreLog.pdf'
+else:
+    suffix = '_ChannelSpectre.pdf'
+plt.savefig(os.path.join(output_dir, "BackGround" + suffix))
+plt.close()

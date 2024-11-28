@@ -109,3 +109,29 @@ for name, props in energy_beta.items():
     plt.savefig(plot_file_path)
     plt.close()
     print(f"Plot saved for {name} as {plot_file_path}")
+
+# Calculate are of gaussian
+def gaussian_area(c, c_error, s, s_error):
+    area = c * np.sqrt(2 * np.pi) * s
+    error = np.sqrt((np.sqrt(2 * np.pi) * s * c_error)**2 + (c * np.sqrt(2 * np.pi) * s_error)**2)
+    return area, error
+
+# Calculate counts under gaussian
+area, error = gaussian_area(c, c_err, s, s_err)
+
+# Calculate activity
+time = 10 # min
+activity = area / (time * 60)
+error_activity = np.sqrt((1/(time * 60) * error)**2)
+
+# Save the calculate are parameters and errors to a text file
+param_file_1 = f'./Results/{name}_calculate_activity.txt'
+with open(param_file_1, 'w') as f:
+    f.write(f"Calculated area for {name}:\n")
+    f.write("------------------------------------------------\n")
+    f.write(f"Area: {area:.4f} +- {error:.4f}\n")
+    f.write(f"Time: {time * 60} s \n")
+    f.write(f"Activity {activity:.4f} +- {error_activity:.4f}\n")
+    f.write("------------------------------------------------\n")
+    f.write(f"Gaussian peak energy: {props['Energy']} keV\n")
+print(f"Calculate area and errors for {name} saved to {param_file_1}")
