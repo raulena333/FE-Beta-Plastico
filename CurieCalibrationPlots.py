@@ -56,8 +56,8 @@ def calculate_error(slope, slope_error, inter, inter_error):
 
 # Configuration for each plot using best combinations from the file
 values = {
-    'Kurie': {'y_data': value, 'min': best_combinations[0][0], 'max': best_combinations[0][1], 'label': "Kurie Fit", 'color': 'blue', 'marker': 'o'},
-    'N(E)': {'y_data': np.sqrt(N_E), 'min': best_combinations[1][0], 'max': best_combinations[1][1], 'label': r"$\sqrt{N(E)}$ Fit", 'color': 'green', 'marker': 'v'}
+    'Kurie': {'y_data': value, 'min': best_combinations[0][0], 'max': best_combinations[0][1], 'label': "Kurie Data", 'color': 'blue', 'marker': 'o'},
+    'N(E)': {'y_data': np.sqrt(N_E), 'min': best_combinations[1][0], 'max': best_combinations[1][1], 'label': r"$\sqrt{N(E)}$ Data", 'color': 'green', 'marker': 'v'}
 }
 
 # Prepare the plot
@@ -115,9 +115,9 @@ handles.extend(handles2)
 labels.extend(labels2)
 
 # Add labels, legends, and grid
-ax1.set_xlabel("Energy (MeV)")
-ax1.set_ylabel("Kurie Plot", color='blue')
-ax2.set_ylabel(r"$\sqrt{N(E)}$ Plot", color='green')
+ax1.set_xlabel("Energia (MeV)")
+ax2.set_ylabel(r"$\frac{1}{W}\sqrt{\frac{N(E)}{G(Z,W)}}$", color='blue')
+ax1.set_ylabel(r"$\sqrt{N(E)}$", color='green')
 
 # Add a single legend for both axes
 ax1.legend(handles, labels)
