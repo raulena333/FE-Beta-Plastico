@@ -1,0 +1,2 @@
+Component	Energy (keV)	Intensity
+beta-	350	0.930250

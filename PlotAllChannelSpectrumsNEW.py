@@ -34,9 +34,9 @@ def plot_spectrum(name, channel_number, net_counts):
 
     if use_log_scale:
         plt.semilogy()
-        suffix = '_ChannelSpectreLog.pdf'
+        suffix = '_ChannelSpectreLog.png'
     else:
-        suffix = '_ChannelSpectre.pdf'
+        suffix = '_ChannelSpectre.png'
     plt.savefig(os.path.join(output_dir, name + suffix))
     plt.close()
 
@@ -66,8 +66,8 @@ plt.xlabel("Canal")
 plt.ylabel("Numero de cuentas")
 if use_log_scale:
     plt.semilogy()
-    suffix = '_ChannelSpectreLog.pdf'
+    suffix = '_ChannelSpectreLog.png'
 else:
-    suffix = '_ChannelSpectre.pdf'
+    suffix = '_ChannelSpectre.png'
 plt.savefig(os.path.join(output_dir, "BackGround" + suffix))
 plt.close()

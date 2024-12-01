@@ -13,7 +13,7 @@ params = {
 }
 pylab.rcParams.update(params)
 
-use_log_scale = False  # True for log scale, False for linear scale
+use_log_scale = True  # True for log scale, False for linear scale
 
 # Names of nucleus isotopes
 nucleus_names = {"Cesio137", "Europio152", "Bario133", "Talio204"}
@@ -34,9 +34,9 @@ def plot_spectrum(name, energy_number, net_counts):
 
     if use_log_scale:
         plt.semilogy()
-        suffix = '_EnergySpectreLog.pdf'
+        suffix = '_EnergySpectreLog.png'
     else:
-        suffix = '_EnergySpectre.pdf'
+        suffix = '_EnergySpectre.png'
     plt.savefig(os.path.join(output_dir, name + suffix))
     plt.close()
 

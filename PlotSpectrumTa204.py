@@ -17,7 +17,7 @@ pylab.rcParams.update(params)
 use_log_scale = True  # True for log scale, False for linear scale
 
 # Names of nucleus isotopes
-nucleus_name = "Bario133"
+nucleus_name = "Talio204"
 
 # Output directory
 output_dir = './Results'
@@ -28,9 +28,9 @@ def plot_spectrum(name, energy_number, net_counts, annotations):
     plt.figure(figsize=(10, 6))
     plt.plot(energy_number, net_counts, label=name, color="black", linewidth=2)
     
-    # # Plot the fitted curve only if it exists
+    # Plot the fitted curve only if it exists
     # if fitted_curve is not None and energy_in_region is not None:
-    #     plt.plot(energy_in_region, fitted_curve, label="Fit", color="red", linestyle="--", linewidth=2)
+    #    plt.plot(energy_in_region, fitted_curve, label="Fit", color="red", linestyle="--", linewidth=2)
     
     plt.xlabel("Energia (keV)")
     plt.ylabel("Número de cuentas")
@@ -70,10 +70,8 @@ def plot_spectrum(name, energy_number, net_counts, annotations):
     plt.close()
 
 # Annotations: (energy_value, "label")
-annotations = [
-    (320, r"CI"),
-    (30.85, "RX +CI"),    
-    (44.5, "CI"),
+annotations = [   
+    (350, r"$\beta-$"),
 ]
 
 # Process Spectrum for Bario133
@@ -87,9 +85,7 @@ counts = data_nucleus[:, 1]
 plot_spectrum(nucleus_name, energy, counts, annotations)
 
 energy_ranges = {
-    'CI': {'Energy': 320, 'min': 293, 'max': 349}, 
-    'Rayos X + CI': {'Energy': 30.85, 'min': 19, 'max': 39},
-    'CI 2': {'Energy': 45, 'min': 43, 'max': 56},
+    'beta-': {'Energy': 350, 'min': 54, 'max': 690}, 
 }
 
 # Total counts
@@ -128,4 +124,6 @@ with open(output_file, 'w') as f:
 
 # Print the path of the saved results file
 print(f"Results saved to {output_file}")
+
+
 

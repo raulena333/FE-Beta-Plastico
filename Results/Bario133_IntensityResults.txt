@@ -1,0 +1,4 @@
+Component	Energy (keV)	Intensity
+CI	320	0.060529
+Rayos X + CI	30.85	0.242906
+CI 2	45	0.123293

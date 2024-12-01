@@ -19,7 +19,7 @@ input_file = './TableValues.txt'
 input_configuration = './Results/QBest_values.txt'
 
 # Output plot path
-output_plot = './Results/LinearFits_QValue.pdf'
+output_plot = './Results/LinearFits_QValue.png'
 output_results_file = './Results/Q_ValuesErrors.txt' 
 
 # Check if input file exists

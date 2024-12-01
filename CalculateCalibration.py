@@ -116,8 +116,18 @@ def gaussian_area(c, c_error, s, s_error):
     error = np.sqrt((np.sqrt(2 * np.pi) * s * c_error)**2 + (c * np.sqrt(2 * np.pi) * s_error)**2)
     return area, error
 
+def area_under_line(a, a_error, b, b_error, min_channel, max_channel):
+    integral = lambda x: (b / 2) * x**2 + a * x
+    value =  integral(max_channel) - integral(min_channel)
+    error = np.sqrt(((max_channel - min_channel) * a_error)**2 + (0.5 * (max_channel - min_channel)**2 * b_error)**2)
+    return value, error
+
 # Calculate counts under gaussian
-area, error = gaussian_area(c, c_err, s, s_err)
+areaG, errorG = gaussian_area(c, c_err, s, s_err)
+areaL, errorL = area_under_line(a, a_err, b, b_err, min_channel, max_channel)
+
+area = areaG - areaL
+error = np.sqrt(errorG**2 + errorL**2)
 
 # Calculate activity
 time = 10 # min

@@ -2,10 +2,10 @@ Fitted parameters for Bario133:
 ------------------------------------------------
 
 Conversion Interna:
-a (offset): 2241.7752 +- inf
-b (background slope): -4.4915 +- inf
-c (peak height): 3000.0000 +- inf
-xc (peak center): 110.0000 +- inf channel
-s (peak width): 15.0000 +- inf channel
+a (offset): -2581.9300 +- 576.0870
+b (background slope): 11.5290 +- 1.9543
+c (peak height): -1321.7372 +- 177.8170
+xc (peak center): 370.2980 +- 3.4388 channel
+s (peak width): 21.0802 +- 2.8908 channel
 ------------------------------------------------
 Gaussian peak energy: 320 keV
