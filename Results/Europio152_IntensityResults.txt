@@ -1,0 +1,4 @@
+Component	Energy (keV)	Intensity
+beta-	350	0.382298
+CI + RX	41.3	0.288348
+RX	89.849	0.179299

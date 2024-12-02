@@ -9,7 +9,7 @@ input_file = './TableValues.txt'
 output_results_file = './Results/QBest_Values.txt'
 
 # Target Q value
-target_Q = 0.8
+target_Q = 0.76
 
 # Check if input file exists
 if not os.path.exists(input_file):

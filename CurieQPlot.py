@@ -18,7 +18,7 @@ pylab.rcParams.update(params)
 # Paths
 input_file = './Tablevalues.txt'
 q_values_file = "./Results/Q_ValuesErrors.txt"
-output_file = "./Results/QCuriePlot.pdf"
+output_file = "./Results/QCuriePlot.png"
 input_fermi = "./Fermi_204Tl.txt"
 
 # Read Q values

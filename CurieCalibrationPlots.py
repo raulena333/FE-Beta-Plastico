@@ -19,7 +19,7 @@ input_file = './TableValues.txt'
 input_configuration = './Results/QBest_values.txt'
 
 # Output plot path
-output_plot = './Results/LinearFits_QValue.png'
+output_plot = './Results/LinearFits_QValue.pdf'
 output_results_file = './Results/Q_ValuesErrors.txt' 
 
 # Check if input file exists
@@ -61,7 +61,7 @@ values = {
 }
 
 # Prepare the plot
-fig, ax1 = plt.subplots(figsize=(10, 6))
+fig, ax1 = plt.subplots(figsize=(11.5, 6.85))
 
 # Create the second y-axis
 ax2 = ax1.twinx()

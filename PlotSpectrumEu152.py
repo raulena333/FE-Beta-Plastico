@@ -66,16 +66,17 @@ def plot_spectrum(name, energy_number, net_counts, annotations):
         suffix = '_EnergySpectreBario133Annotations.pdf'
     
     plt.savefig(os.path.join(output_dir, name + suffix))
+    plt.show()
     plt.close()
 
 # Annotations: (energy_value, "label")
 annotations = [
-    (41.330, "CE"),
-    (16, "CE"),
-    (31, "CE"),
-    (41.542, "RayosX"),
-    (89.849, "Rayos X"),    
-    (704, "beta"),
+    (41.330, "CI"),
+    #(16, "CE"),
+    #(31.7, "CI"),
+    #(41.542, "RayosX"),
+    (89.849, "RX"),    
+    (904, r"$\beta-$"),
 ]
 
 # Process Spectrum for Bario133
@@ -88,67 +89,45 @@ counts = data_nucleus[:, 1]
 
 plot_spectrum(nucleus_name, energy, counts, annotations)
     
-# # Fit function: Gaussian with linear background
-# def gaussian(x, a, b, c, xc, s): 
-#    return a + b * x + c * np.exp(-(x - xc)**2 / (2 * s**2))
+energy_ranges = {
+    'beta-': {'Energy': 350, 'min': 181, 'max': 1500}, 
+    'CI + RX': {'Energy': 41.3, 'min': 19, 'max': 76},
+    'RX' : {'Energy': 89.849, 'min': 80, 'max': 118},
+}
 
-# # Define energy ranges for fitting
-# energy_beta_X = {
-#     'Rayos X': {'Energy': 30.85, 'min': 15, 'max': 55},
-#     'Conversion Interna': {'Energy': 320, 'min': 280, 'max': 370},
-# }
+# Total counts
+total_counts = np.sum(counts)
 
-# param_file = f'./Results/{nucleus_name}_fitted_parameters.txt'
+# List to store the results for each component
+results = []  
 
-# # Open the file in append mode to avoid overwriting
-# with open(param_file, 'w') as f:
-#     f.write(f"Fitted parameters for {nucleus_name}:\n")
-#     f.write("------------------------------------------------\n")
+# Count the number of counts within each energy range and calculate the intensity
+for component, values in energy_ranges.items():
+    # Find the minimum and maximum energy for the current component
+    min_energy = values['min']
+    max_energy = values['max']
+    
+    # Mask to find the indices of energies within the range of the current component
+    mask = (energy >= min_energy) & (energy <= max_energy)
+    
+    # Count the number of counts within the specified energy range
+    counts_in_range = np.sum(counts[mask])
+    
+    # Calculate the intensity: the ratio of counts in the range to the total counts
+    intensity = counts_in_range / total_counts
+    
+    # Store the result: component name, energy value, and calculated intensity
+    results.append([component, values['Energy'], intensity])
 
-# # Process each energy range for fitting
-# for name, props in energy_beta_X.items():
-#     min_channel = props['min']
-#     max_channel = props['max']
+# Save the results to a text file
+output_file = os.path.join(output_dir, f"{nucleus_name}_IntensityResults.txt")
+header = "Component\tEnergy (keV)\tIntensity"  # Header for the file
 
-#     # Select data within the region of interest (from min to max)
-#     region = (energy >= min_channel) & (energy <= max_channel)
-#     energy_in_region = energy[region]
-#     counts_in_region = counts[region]
+# Open the file for writing
+with open(output_file, 'w') as f:
+    f.write(header + "\n")  # Write the header line
+    for result in results:
+        f.write(f"{result[0]}\t{result[1]}\t{result[2]:.6f}\n")  # Write each result
 
-#     # Fit the model (Gaussian + Linear background) to the data
-#     initial_guess = [-10., -10., 1e3, 370, 15]
-#     try:
-#         popt, pcov = curve_fit(
-#             gaussian, 
-#             energy_in_region, 
-#             counts_in_region, 
-#             p0=initial_guess, 
-#         )
-#         # Calculate parameter errors as the square root of the diagonal of the covariance matrix
-#         perr = np.sqrt(np.diag(pcov))
-#     except RuntimeError as e:
-#         print(f"Curve fitting failed for {name}: {e}. Skipping this energy.")
-#         continue
-
-#    # Extract fitted parameters and their errors
-#     a, b, c, xc, s = popt
-#     a_err, b_err, c_err, xc_err, s_err = perr
-
-#     # Generate the fitted curve
-#     fitted_curve = gaussian(energy_in_region, *popt)
-
-#     # Save the fitted parameters and errors to a text file
-#     with open(param_file, 'a') as f:
-#         f.write(f"\n{name}:\n")
-#         f.write(f"a (offset): {a:.4f} +- {a_err:.4f}\n")
-#         f.write(f"b (background slope): {b:.4f} +- {b_err:.4f}\n")
-#         f.write(f"c (peak height): {c:.4f} +- {c_err:.4f}\n")
-#         f.write(f"xc (peak center): {xc:.4f} +- {xc_err:.4f} channel\n")
-#         f.write(f"s (peak width): {s:.4f} +- {s_err:.4f} channel\n")
-#         f.write("------------------------------------------------\n")
-#         f.write(f"Gaussian peak energy: {props['Energy']} keV\n")
-#     print(f"Fitted parameters and errors for {name} saved to {param_file}")
-
-    # Plot the spectrum with the fitted Gaussian and background in the same figure
-    #plot_spectrum(nucleus_name, energy, counts, annotations, fitted_curve=fitted_curve, energy_in_region=energy_in_region)
-    #print(f"Plot saved for {name} as {os.path.join(output_dir, nucleus_name + '_EnergySpectreBario133Annotations.pdf')}")
+# Print the path of the saved results file
+print(f"Results saved to {output_file}")
